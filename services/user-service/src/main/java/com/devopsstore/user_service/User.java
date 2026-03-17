@@ -15,26 +15,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String username;
-
-    private String email;
-}
-package com.devopsstore.user_service;
-
-import jakarta.persistence.*;
-import lombok.*;
-
-@Entity
-@Table(name = "users") // 'user' is often a reserved keyword in Postgres
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

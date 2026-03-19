@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:5432"
 
-  product-service:
+  product-service:uhasgdi
     build: ./services/product-service
     container_name: product-service
     ports:

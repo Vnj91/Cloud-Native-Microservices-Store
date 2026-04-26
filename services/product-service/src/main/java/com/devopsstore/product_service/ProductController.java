@@ -7,18 +7,19 @@ import java.util.List;
 @RequestMapping("/api/products")
 public class ProductController {
 
+
     private final ProductRepository repository;
 
     public ProductController(ProductRepository repository) {
         this.repository = repository;
     }
 
-    @GetMapping // This handles GET /api/products
+    @GetMapping 
     public List<Product> getAllProducts() {
         return repository.findAll();
     }
 
-    @PostMapping // This handles POST /api/products (adding a new product)
+    @PostMapping 
     public Product createProduct(@RequestBody Product product) {
         return repository.save(product);
     }

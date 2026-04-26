@@ -8,8 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity        // Tells the database this is a table
-@Data          // Lombok: automatically creates getters and setters
+@Entity        
+@Data          
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product {

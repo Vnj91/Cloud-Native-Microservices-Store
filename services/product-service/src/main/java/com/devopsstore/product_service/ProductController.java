@@ -1,5 +1,7 @@
 package com.devopsstore.product_service;
 
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -7,20 +9,21 @@ import java.util.List;
 @RequestMapping("/api/products")
 public class ProductController {
 
+    private final ProductService productService;
 
-    private final ProductRepository repository;
-
-    public ProductController(ProductRepository repository) {
-        this.repository = repository;
+    // Inject the Service, NOT the Repository
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
     @GetMapping 
     public List<Product> getAllProducts() {
-        return repository.findAll();
+        return productService.getAllProducts();
     }
 
     @PostMapping 
-    public Product createProduct(@RequestBody Product product) {
-        return repository.save(product);
+    @ResponseStatus(HttpStatus.CREATED)
+    public Product createProduct(@Valid @RequestBody Product product) {
+        return productService.createProduct(product);
     }
 }

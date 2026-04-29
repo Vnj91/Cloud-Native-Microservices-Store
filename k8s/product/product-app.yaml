@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: product-service
 spec:
-  replicas: 
+  replicas: 2 
   selector:
     matchLabels:
       app: product-service
@@ -37,7 +37,7 @@ kind: Service
 metadata:
   name: product-service
 spec:
-  type: NodePort # Allows you to access it from your browser
+  type: NodePort
   selector:
     app: product-service
   ports:

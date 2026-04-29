@@ -1,4 +1,4 @@
-package com.devopsstore.product_service;
+package com.devopsstore.user_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -6,7 +6,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class ProductServiceApplicationTests {
+class UserServiceApplicationTests {
 
     @Test
     void contextLoads() {

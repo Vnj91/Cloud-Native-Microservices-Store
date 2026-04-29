@@ -12,8 +12,7 @@ spec:
       labels:
         app: user-service
     spec:
-      contavanshaj@vanshaj-Dell-G15-5520:~/devops-store$ curl http://localhost:8082/actuator/health
-{"groups":["liveness","readiness"],"status":"UP"}vanshaj@vanshaj-Dell-G15-5520:~/devops-store$ iners:
+      containers:
       - name: user-service
         image: vnj91/user-service:latest
         imagePullPolicy: Always

@@ -1,6 +1,0 @@
-/home/vanshaj/devops-store/services/order-service/src/main/java/com/devopsstore/order_service/Order.java
-/home/vanshaj/devops-store/services/order-service/src/main/java/com/devopsstore/order_service/OrderController.java
-/home/vanshaj/devops-store/services/order-service/src/main/java/com/devopsstore/order_service/OrderRepository.java
-/home/vanshaj/devops-store/services/order-service/src/main/java/com/devopsstore/order_service/OrderServiceApplication.java
-/home/vanshaj/devops-store/services/order-service/src/main/java/com/devopsstore/order_service/client/ProductClient.java
-/home/vanshaj/devops-store/services/order-service/src/main/java/com/devopsstore/order_service/client/UserClient.java

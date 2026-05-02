@@ -1,16 +1,9 @@
-FROM maven:3.9.6-eclipse-temurin-21-jammy AS build
-WORKDIR /app
-
-COPY pom.xml .
-COPY src ./src
-
-RUN mvn clean package -DskipTests
-
+# Use a lightweight JRE for the final image
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 
-COPY --from=build /app/target/order-service-0.0.1-SNAPSHOT.jar app.jar
+COPY target/order-service-0.0.1-SNAPSHOT.jar app.jar
 
-EXPOSE 8081
+EXPOSE 8083
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

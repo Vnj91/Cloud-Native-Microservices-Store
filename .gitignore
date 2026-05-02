@@ -1,0 +1,12 @@
+# Java/Maven
+target/
+*.jar
+*.war
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store

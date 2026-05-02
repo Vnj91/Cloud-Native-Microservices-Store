@@ -1,53 +1,67 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
-
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
 }
 
-.hero {
-  position: relative;
+.stat-card {
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
 
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 20px -4px rgba(14, 20, 46, 0.1);
+}
 
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
+.stat-card .icon-wrapper {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  .framework,
-  .vite {
-    position: absolute;
-  }
+.stat-card .icon-wrapper.blue { background-color: #e0e7ff; color: #4f46e5; }
+.stat-card .icon-wrapper.green { background-color: #d1fae5; color: #059669; }
+.stat-card .icon-wrapper.purple { background-color: #f3e8ff; color: #9333ea; }
 
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
+.stat-card .label {
+  font-size: 0.9rem;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
 
-  .vite {
-    z-index: 0;
+.stat-card .value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.chart-container {
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: var(--shadow);
+}
+
+.chart-container h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
     top: 107px;
     height: 26px;
     width: auto;

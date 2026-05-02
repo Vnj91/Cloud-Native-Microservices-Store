@@ -1,11 +1,13 @@
-# Use the lightweight JRE for the final image
+# Stage 1: Build
+FROM maven:3.9.6-eclipse-temurin-21-jammy AS build
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# Stage 2: Runtime
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
-
-# Copy the JAR already built by GitHub Actions from the target folder
-COPY target/product-service-0.0.1-SNAPSHOT.jar app.jar
-
-# Product Service runs on 8081
+COPY --from=build /app/target/product-service-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8081
-
 ENTRYPOINT ["java", "-jar", "app.jar"]

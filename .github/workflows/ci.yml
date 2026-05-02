@@ -27,10 +27,9 @@ jobs:
     - name: Build Service with Maven
       run: |
         cd services/${{ matrix.service }}
-        # Use 'mvn' if 'mvnw' wrapper isn't present in the subdirectories
-        mvn clean package -DskipTests 
-        # Note: I recommend keeping -DskipTests for now until your DB-dependent 
-        # tests are configured to run in a containerized CI environment.
+        mvn clean package -DskipTests
+        # Diagnostic: List target folder so we can verify the JAR name in logs
+        ls -R target
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
@@ -41,7 +40,12 @@ jobs:
     - name: Build and Push Docker Image
       run: |
         cd services/${{ matrix.service }}
+        
+        # Define image name using secrets
         IMAGE_NAME="${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}"
+        
+        # Build and Push
+        # The '.' context is crucial here—it represents the service directory
         docker build -t $IMAGE_NAME:latest -t $IMAGE_NAME:${{ github.sha }} .
         docker push $IMAGE_NAME:latest
         docker push $IMAGE_NAME:${{ github.sha }}

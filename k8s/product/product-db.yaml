@@ -1,3 +1,18 @@
+---
+# 1. The Networking Service (So the app can find the DB)
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-db
+spec:
+  selector:
+    app: product-db
+  ports:
+    - port: 5432
+      targetPort: 5432
+
+---
+# 2. The Deployment (The Postgres Database)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,32 +28,14 @@ spec:
         app: product-db
     spec:
       containers:
-      - name: postgres
-        image: postgres:16-alpine
-        ports:
-        - containerPort: 5432
-        env:
-        - name: POSTGRES_DB
-          value: productdb
-        - name: POSTGRES_USER
-          valueFrom:
-            secretKeyRef:
-              name: product-db-secret
-              key: POSTGRES_USER
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: product-db-secret
-              key: POSTGRES_PASSWORD
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: product-db
-spec:
-  selector:
-    app: product-db
-  ports:
-    - protocol: TCP
-      port: 5432
-      targetPort: 5432
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: productdb
+            - name: POSTGRES_USER
+              value: user
+            - name: POSTGRES_PASSWORD
+              value: password

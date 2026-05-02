@@ -1,0 +1,6 @@
+com/devopsstore/order_service/OrderRepository.class
+com/devopsstore/order_service/client/ProductClient.class
+com/devopsstore/order_service/client/UserClient.class
+com/devopsstore/order_service/OrderServiceApplication.class
+com/devopsstore/order_service/Order.class
+com/devopsstore/order_service/OrderController.class

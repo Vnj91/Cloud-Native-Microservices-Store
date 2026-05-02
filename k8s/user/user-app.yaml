@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: user-service
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: user-service
@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: user-service
-        image: vnj91/user-service:latest
+        image: vnj91/user-service:v2
         imagePullPolicy: Always
         ports:
         - containerPort: 8082 

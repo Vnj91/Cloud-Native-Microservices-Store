@@ -15,7 +15,7 @@ spec:
       containers:
       - name: product-service
         image: vnj91/product-service:latest
-        imagePullPolicy: Always
+        imagePullPolicy: Always            
         ports:
         - containerPort: 8081
         env:

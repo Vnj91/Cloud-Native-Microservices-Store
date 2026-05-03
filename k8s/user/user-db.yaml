@@ -4,6 +4,8 @@ metadata:
   name: user-db
 spec:
   replicas: 1
+  strategy:
+    type: Recreate 
   selector:
     matchLabels:
       app: user-db
@@ -30,6 +32,13 @@ spec:
             secretKeyRef:
               name: user-db-secret
               key: POSTGRES_PASSWORD
+        volumeMounts:
+        - name: user-db-storage
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: user-db-storage
+        persistentVolumeClaim:
+          claimName: user-db-pvc
 ---
 apiVersion: v1
 kind: Service

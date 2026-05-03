@@ -11,7 +11,8 @@
   --accent-border: rgba(79, 70, 229, 0.5);
   --social-bg: rgba(240, 242, 249, 0.5);
   --shadow:
-    rgba(14, 20, 46, 0.07) 0 10px 15px -3px, rgba(14, 20, 46, 0.04) 0 4px 6px -2px;
+    rgba(14, 20, 46, 0.07) 0 10px 15px -3px,
+    rgba(14, 20, 46, 0.04) 0 4px 6px -2px;
 
   --sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -34,12 +35,14 @@ body {
   min-height: 100vh;
 }
 
+/* Headings */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--heading);
   color: var(--text-h);
   font-weight: 700;
 }
 
+/* Dark mode */
 @media (prefers-color-scheme: dark) {
   :root {
     --text: #a8b2d3;
@@ -52,11 +55,12 @@ h1, h2, h3, h4, h5, h6 {
     --accent-border: rgba(129, 140, 248, 0.5);
     --social-bg: rgba(26, 32, 60, 0.5);
     --shadow:
-      rgba(0, 0, 0, 0.2) 0 10px 15px -3px, rgba(0, 0, 0, 0.15) 0 4px 6px -2px;
+      rgba(0, 0, 0, 0.2) 0 10px 15px -3px,
+      rgba(0, 0, 0, 0.15) 0 4px 6px -2px;
   }
 }
 
-/* Adding some utility classes that might be useful */
+/* Container FIXED */
 .container {
   width: 100%;
   max-width: 1280px;
@@ -64,55 +68,44 @@ h1, h2, h3, h4, h5, h6 {
   margin-right: auto;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
-}
 
-}
-
-body {
-  margin: 0;
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
+/* Typography */
 h1 {
   font-size: 56px;
   letter-spacing: -1.68px;
   margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
 }
+
 h2 {
   font-size: 24px;
   line-height: 118%;
   letter-spacing: -0.24px;
   margin: 0 0 8px;
-  @media (max-width: 1024px) {
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  h1 {
+    font-size: 36px;
+    margin: 20px 0;
+  }
+
+  h2 {
     font-size: 20px;
   }
 }
+
 p {
   margin: 0;
 }
 
+/* Code styles */
 code,
 .counter {
   font-family: var(--mono);

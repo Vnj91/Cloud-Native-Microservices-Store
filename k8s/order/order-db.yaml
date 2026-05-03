@@ -4,6 +4,8 @@ metadata:
   name: order-db
 spec:
   replicas: 1
+  strategy:
+    type: Recreate 
   selector:
     matchLabels:
       app: order-db
@@ -30,6 +32,13 @@ spec:
             secretKeyRef:
               name: order-db-secret
               key: POSTGRES_PASSWORD
+        volumeMounts:
+        - name: order-db-storage
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: order-db-storage
+        persistentVolumeClaim:
+          claimName: order-db-pvc
 ---
 apiVersion: v1
 kind: Service

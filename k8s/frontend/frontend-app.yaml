@@ -15,6 +15,7 @@ spec:
       containers:
       - name: frontend
         image: vnj91/frontend:latest
+        imagePullPolicy: Always  # <--- Add this line here
         ports:
         - containerPort: 80
 ---

@@ -1,24 +1,11 @@
----
-# 1. The Networking Service (So the app can find the DB)
-apiVersion: v1
-kind: Service
-metadata:
-  name: product-db
-spec:
-  selector:
-    app: product-db
-  ports:
-    - port: 5432
-      targetPort: 5432
-
----
-# 2. The Deployment (The Postgres Database)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: product-db
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: product-db
@@ -36,6 +23,30 @@ spec:
             - name: POSTGRES_DB
               value: productdb
             - name: POSTGRES_USER
-              value: user
+              valueFrom:
+                secretKeyRef:
+                  name: product-db-secret
+                  key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
-              value: password
+              valueFrom:
+                secretKeyRef:
+                  name: product-db-secret
+                  key: POSTGRES_PASSWORD
+          volumeMounts:
+          - name: product-db-storage
+            mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: product-db-storage
+        persistentVolumeClaim:
+          claimName: product-db-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-db
+spec:
+  selector:
+    app: product-db
+  ports:
+    - port: 5432
+      targetPort: 5432

@@ -1,16 +1,66 @@
+# =========================
+# USER DB STORAGE
+# =========================
+
+resource "kubernetes_persistent_volume_v1" "user_db_pv" {
+  metadata {
+    name = "user-db-pv"
+  }
+
+  spec {
+    capacity = {
+      storage = "1Gi"
+    }
+
+    access_modes = ["ReadWriteOnce"]
+
+    persistent_volume_source {
+      host_path {
+        path = "/mnt/data/user-db"
+      }
+    }
+  }
+}
+
+resource "kubernetes_persistent_volume_claim_v1" "user_db_pvc" {
+  metadata {
+    name = "user-db-pvc"
+  }
+
+  spec {
+    access_modes = ["ReadWriteOnce"]
+
+    resources {
+      requests = {
+        storage = "1Gi"
+      }
+    }
+  }
+}
+
+# =========================
+# USER DB
+# =========================
+
 resource "kubernetes_deployment_v1" "user_db" {
-  metadata { name = "user-db" }
+  metadata {
+    name = "user-db"
+  }
 
   spec {
     replicas = 1
 
     selector {
-      match_labels = { app = "user-db" }
+      match_labels = {
+        app = "user-db"
+      }
     }
 
     template {
       metadata {
-        labels = { app = "user-db" }
+        labels = {
+          app = "user-db"
+        }
       }
 
       spec {
@@ -29,6 +79,7 @@ resource "kubernetes_deployment_v1" "user_db" {
 
           env {
             name = "POSTGRES_USER"
+
             value_from {
               secret_key_ref {
                 name = kubernetes_secret_v1.db_secret.metadata[0].name
@@ -39,6 +90,7 @@ resource "kubernetes_deployment_v1" "user_db" {
 
           env {
             name = "POSTGRES_PASSWORD"
+
             value_from {
               secret_key_ref {
                 name = kubernetes_secret_v1.db_secret.metadata[0].name
@@ -52,11 +104,11 @@ resource "kubernetes_deployment_v1" "user_db" {
             mount_path = "/var/lib/postgresql/data"
           }
 
-          # ✅ HEALTH CHECKS
           readiness_probe {
             exec {
               command = ["pg_isready", "-U", "postgres"]
             }
+
             initial_delay_seconds = 10
             period_seconds        = 5
           }
@@ -65,16 +117,17 @@ resource "kubernetes_deployment_v1" "user_db" {
             exec {
               command = ["pg_isready", "-U", "postgres"]
             }
+
             initial_delay_seconds = 20
             period_seconds        = 10
           }
 
-          # ✅ RESOURCE LIMITS
           resources {
             limits = {
               cpu    = "500m"
               memory = "512Mi"
             }
+
             requests = {
               cpu    = "250m"
               memory = "256Mi"
@@ -86,27 +139,42 @@ resource "kubernetes_deployment_v1" "user_db" {
           name = "user-db-storage"
 
           persistent_volume_claim {
-            claim_name = "user-db-pvc"
+            claim_name = kubernetes_persistent_volume_claim_v1.user_db_pvc.metadata[0].name
           }
         }
       }
     }
   }
+
+  depends_on = [
+    kubernetes_persistent_volume_v1.user_db_pv,
+    kubernetes_persistent_volume_claim_v1.user_db_pvc
+  ]
 }
 
+# =========================
+# PRODUCT DB
+# =========================
+
 resource "kubernetes_deployment_v1" "product_db" {
-  metadata { name = "product-db" }
+  metadata {
+    name = "product-db"
+  }
 
   spec {
     replicas = 1
 
     selector {
-      match_labels = { app = "product-db" }
+      match_labels = {
+        app = "product-db"
+      }
     }
 
     template {
       metadata {
-        labels = { app = "product-db" }
+        labels = {
+          app = "product-db"
+        }
       }
 
       spec {
@@ -125,6 +193,7 @@ resource "kubernetes_deployment_v1" "product_db" {
 
           env {
             name = "POSTGRES_USER"
+
             value_from {
               secret_key_ref {
                 name = kubernetes_secret_v1.db_secret.metadata[0].name
@@ -135,6 +204,7 @@ resource "kubernetes_deployment_v1" "product_db" {
 
           env {
             name = "POSTGRES_PASSWORD"
+
             value_from {
               secret_key_ref {
                 name = kubernetes_secret_v1.db_secret.metadata[0].name
@@ -147,6 +217,7 @@ resource "kubernetes_deployment_v1" "product_db" {
             exec {
               command = ["pg_isready"]
             }
+
             initial_delay_seconds = 10
           }
         }
@@ -155,19 +226,29 @@ resource "kubernetes_deployment_v1" "product_db" {
   }
 }
 
+# =========================
+# ORDER DB
+# =========================
+
 resource "kubernetes_deployment_v1" "order_db" {
-  metadata { name = "order-db" }
+  metadata {
+    name = "order-db"
+  }
 
   spec {
     replicas = 1
 
     selector {
-      match_labels = { app = "order-db" }
+      match_labels = {
+        app = "order-db"
+      }
     }
 
     template {
       metadata {
-        labels = { app = "order-db" }
+        labels = {
+          app = "order-db"
+        }
       }
 
       spec {
@@ -186,6 +267,7 @@ resource "kubernetes_deployment_v1" "order_db" {
 
           env {
             name = "POSTGRES_USER"
+
             value_from {
               secret_key_ref {
                 name = kubernetes_secret_v1.db_secret.metadata[0].name
@@ -196,6 +278,7 @@ resource "kubernetes_deployment_v1" "order_db" {
 
           env {
             name = "POSTGRES_PASSWORD"
+
             value_from {
               secret_key_ref {
                 name = kubernetes_secret_v1.db_secret.metadata[0].name
@@ -208,6 +291,7 @@ resource "kubernetes_deployment_v1" "order_db" {
             exec {
               command = ["pg_isready"]
             }
+
             initial_delay_seconds = 10
           }
         }

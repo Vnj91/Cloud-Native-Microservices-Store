@@ -118,7 +118,7 @@ resource "kubernetes_deployment_v1" "product_service" {
 
       spec {
 
-        # 🔥 INIT CONTAINER (waits for DB)
+        # INIT CONTAINER (waits for DB)
         init_container {
           name  = "wait-for-product-db"
           image = "busybox:1.36"
@@ -130,7 +130,7 @@ resource "kubernetes_deployment_v1" "product_service" {
           ]
         }
 
-        # 👇 MAIN APP CONTAINER
+        # MAIN APP CONTAINER
         container {
           name  = "product-service"
           image = "vnj91/product-service:latest"
@@ -186,5 +186,34 @@ resource "kubernetes_service_v1" "product_service" {
     }
 
     type = "NodePort"
+  }
+}
+
+# --- DATABASE SERVICES (Add these to databases.tf) ---
+
+resource "kubernetes_service_v1" "user_db" {
+  metadata { name = "user-db" }
+  spec {
+    selector = { app = "user-db" }
+    port { port = 5432 }
+    type = "ClusterIP"
+  }
+}
+
+resource "kubernetes_service_v1" "product_db" {
+  metadata { name = "product-db" }
+  spec {
+    selector = { app = "product-db" }
+    port { port = 5432 }
+    type = "ClusterIP"
+  }
+}
+
+resource "kubernetes_service_v1" "order_db" {
+  metadata { name = "order-db" }
+  spec {
+    selector = { app = "order-db" }
+    port { port = 5432 }
+    type = "ClusterIP"
   }
 }

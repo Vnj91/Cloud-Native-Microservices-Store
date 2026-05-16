@@ -1,0 +1,10 @@
+# Ignore local build outputs
+target/
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.iml
+
+# Ignore git
+.git/

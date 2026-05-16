@@ -1,0 +1,23 @@
+# Java / Maven
+target/
+*.jar
+*.war
+
+# Node.js
+node_modules/
+
+# Terraform
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+
+# GitHub Actions Runner
+actions-runner/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store

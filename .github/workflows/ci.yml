@@ -1,0 +1,96 @@
+name: Java CI with Maven and Docker
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  build-and-push-services:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        service:
+          [
+            product-service,
+            user-service,
+            order-service,
+            api-gateway,
+            frontend,
+            discovery-service
+          ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.1.0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3.1.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        run: |
+          cd services/${{ matrix.service }}
+
+          IMAGE_NAME="${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}"
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+
+          docker build \
+            --build-arg BUILD_VERSION=$SHORT_SHA \
+            -t $IMAGE_NAME:latest \
+            -t $IMAGE_NAME:$SHORT_SHA \
+            .
+
+          docker push $IMAGE_NAME:latest
+          docker push $IMAGE_NAME:$SHORT_SHA
+
+  deploy-to-k8s:
+    runs-on: self-hosted
+    needs: build-and-push-services
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.1.0
+
+      - name: Verify Kubernetes Cluster
+        run: kubectl get nodes
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.6
+
+      - name: Terraform Init
+        run: terraform -chdir=terraform/k8s-resources init
+
+      - name: Terraform Validate
+        run: terraform -chdir=terraform/k8s-resources validate
+
+      - name: Terraform Plan
+        env:
+          TF_VAR_docker_hub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+
+          TF_VAR_user_db_username: ${{ secrets.USER_DB_USERNAME }}
+          TF_VAR_user_db_password: ${{ secrets.USER_DB_PASSWORD }}
+
+          TF_VAR_product_db_username: ${{ secrets.PRODUCT_DB_USERNAME }}
+          TF_VAR_product_db_password: ${{ secrets.PRODUCT_DB_PASSWORD }}
+        run: terraform -chdir=terraform/k8s-resources plan
+
+      - name: Terraform Apply
+        env:
+          TF_VAR_docker_hub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+
+          TF_VAR_user_db_username: ${{ secrets.USER_DB_USERNAME }}
+          TF_VAR_user_db_password: ${{ secrets.USER_DB_PASSWORD }}
+
+          TF_VAR_product_db_username: ${{ secrets.PRODUCT_DB_USERNAME }}
+          TF_VAR_product_db_password: ${{ secrets.PRODUCT_DB_PASSWORD }}
+        run: terraform -chdir=terraform/k8s-resources apply -auto-approve

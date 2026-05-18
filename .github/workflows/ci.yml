@@ -3,6 +3,7 @@ name: Java CI with Maven and Docker
 on:
   push:
     branches: [ "main", "develop" ]
+
   pull_request:
     branches: [ "main", "develop" ]
 
@@ -73,6 +74,19 @@ jobs:
       - name: Terraform Validate
         run: terraform -chdir=terraform/k8s-resources validate
 
+      # DESTROY OLD RESOURCES FIRST
+      - name: Terraform Destroy Old Resources
+        env:
+          TF_VAR_docker_hub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+
+          TF_VAR_user_db_username: ${{ secrets.USER_DB_USERNAME }}
+          TF_VAR_user_db_password: ${{ secrets.USER_DB_PASSWORD }}
+
+          TF_VAR_product_db_username: ${{ secrets.PRODUCT_DB_USERNAME }}
+          TF_VAR_product_db_password: ${{ secrets.PRODUCT_DB_PASSWORD }}
+        run: |
+          terraform -chdir=terraform/k8s-resources destroy -auto-approve || true
+
       - name: Terraform Plan
         env:
           TF_VAR_docker_hub_username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -94,3 +108,16 @@ jobs:
           TF_VAR_product_db_username: ${{ secrets.PRODUCT_DB_USERNAME }}
           TF_VAR_product_db_password: ${{ secrets.PRODUCT_DB_PASSWORD }}
         run: terraform -chdir=terraform/k8s-resources apply -auto-approve
+
+      - name: Verify Deployment
+        run: |
+          kubectl get pods
+          kubectl get svc
+
+      - name: Deployment URLs
+        run: |
+          echo "Frontend: http://localhost:30000"
+          echo "API Gateway: http://localhost:30080"
+          echo "Product Service: http://localhost:30081"
+          echo "User Service: http://localhost:30082"
+          echo "Order Service: http://localhost:30083"

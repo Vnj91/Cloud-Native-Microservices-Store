@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, User, LogOut } from 'lucide-react';
+import { ShoppingCart, User, LogOut, UserPlus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import './Header.css';
@@ -9,7 +9,7 @@ const Header = () => {
   const { user, logout } = useAuth();
   const { cartItems } = useCart();
 
-  const cartCount = cartItems.reduce(
+  const totalItems = cartItems.reduce(
     (sum, item) => sum + item.quantity,
     0
   );
@@ -28,10 +28,9 @@ const Header = () => {
 
           <Link to="/cart" className="nav-link cart-link">
             <ShoppingCart size={20} />
-
-            {cartCount > 0 && (
+            {totalItems > 0 && (
               <span className="cart-badge">
-                {cartCount}
+                {totalItems}
               </span>
             )}
           </Link>
@@ -42,14 +41,25 @@ const Header = () => {
                 Welcome, {user.email}
               </span>
 
-              <button onClick={logout} className="nav-link logout-btn">
+              <button
+                onClick={logout}
+                className="logout-button"
+              >
                 <LogOut size={20} />
               </button>
             </>
           ) : (
-            <Link to="/login" className="nav-link">
-              <User size={20} />
-            </Link>
+            <>
+              <Link to="/login" className="nav-link">
+                <User size={20} />
+                Login
+              </Link>
+
+              <Link to="/register" className="nav-link">
+                <UserPlus size={20} />
+                Register
+              </Link>
+            </>
           )}
         </nav>
       </div>

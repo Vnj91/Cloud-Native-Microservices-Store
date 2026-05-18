@@ -1,362 +1,306 @@
-# DevOps Store - Technology Stack Explanation
+---
+# DevOps Store – Technology Stack & Architecture
 
 ## Project Overview
 
-DevOps Store is a cloud-native microservices-based e-commerce application designed to demonstrate modern DevOps, containerization, orchestration, CI/CD, infrastructure automation, and frontend/backend integration concepts.
+DevOps Store is a cloud-native, microservices-based e-commerce application designed to showcase:
 
-The project was built not just as a shopping application, but as a complete DevOps showcase project demonstrating how production-grade systems are developed, containerized, deployed, automated, and managed.
+- Modern DevOps practices
+- Containerization & orchestration
+- CI/CD automation
+- Infrastructure as Code (IaC)
+- Frontend/backend integration
+
+This project is not just a shopping app, but a complete DevOps demonstration of how production-grade systems are developed, containerized, deployed, automated, and managed.
 
 ---
 
-# Architecture Overview
+## Architecture Overview
 
-The application follows a microservices architecture where multiple independent services communicate together through an API Gateway and Service Discovery mechanism.
+The application uses a microservices architecture. Multiple independent services communicate via an API Gateway and Service Discovery.
 
-Main Components:
-- Frontend Service
-- API Gateway
-- Product Service
-- User Service
-- Order Service
-- Discovery Service
+**Main Components:**
+
+- Frontend Service (React)
+- API Gateway (Spring Cloud Gateway)
+- Product Service (Spring Boot)
+- User Service (Spring Boot)
+- Order Service (Spring Boot)
+- Discovery Service (Eureka)
 - PostgreSQL Databases
 - Kubernetes Cluster
-- CI/CD Pipeline
+- CI/CD Pipeline (GitHub Actions)
 
 ---
 
-# Frontend Technologies
+## Frontend Technologies
 
-## React.js
+### React.js
 
-### What it is
-React is a JavaScript frontend library used to build dynamic and component-based user interfaces.
+- **What:** JavaScript library for building dynamic, component-based UIs.
+- **Why:**
+	- Reusable UI components
+	- Widely used in production
+	- Integrates well with REST APIs
+	- Fast rendering (virtual DOM)
+	- Demonstrates frontend-backend integration
+- **Where:**
+	- Product listing
+	- Cart system
+	- Login/Register
+	- Checkout flow
+	- Navigation
 
-### Why it was used
-React was chosen because:
-- It supports reusable UI components
-- It is widely used in production systems
-- It works well with REST APIs
-- It provides fast rendering through the virtual DOM
-- It demonstrates frontend-backend integration skills
+### Vite
 
-### Where it is used
-- Product listing page
-- Cart system
-- Login/Register pages
-- Checkout flow
-- Navigation system
-
----
-
-## Vite
-
-### What it is
-Vite is a modern frontend build tool and development server.
-
-### Why it was used
-- Faster than traditional React build systems
-- Lightweight
-- Excellent Docker compatibility
-- Fast Hot Module Reloading (HMR)
+- **What:** Modern frontend build tool & dev server.
+- **Why:**
+	- Faster than traditional React build systems
+	- Lightweight
+	- Excellent Docker compatibility
+	- Fast Hot Module Reloading (HMR)
 
 ---
 
-# Backend Technologies
+## Backend Technologies
 
-## Spring Boot
+### Spring Boot
 
-### What it is
-Spring Boot is a Java framework used to create production-grade backend applications and REST APIs.
+- **What:** Java framework for production-grade backend apps & REST APIs.
+- **Why:**
+	- Industry standard
+	- Microservices support
+	- Easy REST API creation
+	- Strong ecosystem
+	- Works with Docker & Kubernetes
+- **Where:**
+	- Product, User, Order, API Gateway, Discovery services
 
-### Why it was used
-- Industry-standard backend framework
-- Excellent microservices support
-- Easy REST API creation
-- Strong ecosystem
-- Works seamlessly with Docker and Kubernetes
+### Spring Cloud Gateway
 
-### Where it is used
-Each backend microservice is built using Spring Boot:
+- **What:** Reverse proxy & central entry for backend services.
+- **Why:**
+	- Routes requests to correct services
+	- Simplifies frontend communication
+	- Improves scalability
+	- Centralizes API traffic management
+- **Example:**
+	- Frontend requests `/api/products` → Gateway → Product Service
+
+### Eureka Discovery Server
+
+- **What:** Service discovery server for microservices.
+- **Why:**
+	- In Kubernetes/distributed systems, service IPs change frequently
+	- Hardcoding addresses is unreliable
+	- Eureka allows services to:
+		- Register themselves automatically
+		- Discover other services dynamically
+	- Demonstrates real cloud-native communication patterns
+
+---
+
+## Database Technologies
+
+### PostgreSQL
+
+- **What:** Open-source relational database system.
+- **Why:**
+	- Production-grade, reliable, scalable
+	- Excellent Spring Boot support
+	- Widely used in enterprise
+- **Database Separation:**
+	- Each service (User, Product, Order) has its own database (microservices principle: each service owns its data)
+
+---
+
+## Containerization & Orchestration
+
+### Docker
+
+- **What:** Containerization platform for packaging apps & dependencies.
+- **Why:**
+	- Environment consistency
+	- Easy deployment
+	- Service isolation
+	- Scalability
+- **Each microservice has its own Docker image.**
+
+**Example Containers:**
+- Frontend
 - Product Service
 - User Service
-- Order Service
-- API Gateway
-- Discovery Service
+- PostgreSQL
+
+### Kubernetes
+
+- **What:** Container orchestration platform.
+- **Why:**
+	- Automatic deployment
+	- Scaling
+	- Self-healing
+	- Load balancing
+	- Service discovery
+	- Rolling updates
+- **Resources Used:**
+	- Deployments, Services, Secrets, Persistent Volumes, Persistent Volume Claims
+
+### KIND (Kubernetes IN Docker)
+
+- **What:** Lightweight Kubernetes cluster inside Docker.
+- **Why:**
+	- Lightweight for local development/testing
+	- Easy Docker Desktop integration
 
 ---
 
-## Spring Cloud Gateway
+## Infrastructure as Code
+
+### Terraform
 
-### What it is
-Spring Cloud Gateway acts as a reverse proxy and central entry point for all backend services.
+- **What:** IaC tool for automating infrastructure provisioning.
+- **Why:**
+	- Automates deployments
+	- Maintains consistency
+	- Version-controlled infrastructure
+	- Reproducible deployments
+- **Resources Managed:**
+	- Kubernetes Deployments, Services, Secrets, Persistent Storage, Monitoring Namespace
+---
 
-### Why it was used
-Instead of exposing every microservice directly, the gateway:
-- Routes requests to correct services
-- Simplifies frontend communication
-- Improves scalability
-- Centralizes API traffic management
+## CI/CD Pipeline
 
-### Example
-Frontend requests:
-```text
-/api/products
+### GitHub Actions
 
+- **What:** CI/CD automation platform integrated with GitHub.
+- **Why:**
+	- Automates Docker image builds
+	- Pushes images to Docker Hub
+	- Deploys to Kubernetes
+	- Executes Terraform
+- **Pipeline Flow:**
+	1. Code pushed to GitHub
+	2. Docker images built
+	3. Images pushed to Docker Hub
+	4. Terraform deploys to Kubernetes
+	5. Services become available automatically
 
-Eureka Discovery Server
-What it is
+### Self-Hosted GitHub Runner
 
-Eureka is a service discovery server used in microservices architectures.
+- **What:** Executes workflows on a custom machine (not GitHub servers).
+- **Why:**
+	- GitHub-hosted runners can't access local Kubernetes
+	- Self-hosted runner can:
+		- Access local Docker Desktop Kubernetes
+		- Run `kubectl` commands
+		- Execute Terraform locally
 
-Why it was used
+---
 
-In Kubernetes or distributed systems:
+## DevOps Concepts Demonstrated
 
-Service IPs change frequently
-Hardcoding addresses is unreliable
+### Microservices Architecture
+- Independent services (not a monolith)
+- **Benefits:**
+	- Independent scaling
+	- Better maintainability
+	- Fault isolation
+	- Easier deployments
 
-Eureka allows services to:
+### CI/CD Automation
+- Automated deployment from Git push to Kubernetes
 
-Automatically register themselves
-Discover other services dynamically
+### Infrastructure as Code
+- All infrastructure defined using Terraform
 
-This demonstrates real cloud-native communication patterns.
+### Containerization
+- Every component runs in an isolated Docker container
 
-Database Technologies
-PostgreSQL
-What it is
+### Orchestration
+- Kubernetes manages deployment lifecycle, networking, and service communication
 
-PostgreSQL is an open-source relational database system.
+### Service Discovery
+- Eureka enables dynamic communication between microservices
 
-Why it was used
-Production-grade database
-Reliable and scalable
-Excellent support with Spring Boot
-Widely used in enterprise systems
-Database Separation
+### Persistent Storage
+- PostgreSQL databases use persistent volumes to retain data across container restarts
 
-Separate databases were used for:
+---
 
-User Service
-Product Service
-Order Service
+## Features
 
-This follows proper microservices principles where each service owns its own data.
+### Frontend
+- Product Listing
+- Shopping Cart
+- User Registration & Login
+- Checkout Flow
+- Order Placement
 
-Containerization
-Docker
-What it is
+### Backend
+- Product, User, Order APIs
+- API Gateway Routing
+- Service Discovery
+- Database Integration
 
-Docker is a containerization platform used to package applications and their dependencies.
+---
 
-Why it was used
+## Deployment Workflow
 
-Docker ensures:
+### Local Development
+- Services can run individually using Docker
 
-Environment consistency
-Easy deployment
-Isolation between services
-Scalability
+### Production-like Deployment
+- Full stack runs on Kubernetes using:
+	- Terraform
+	- Docker images
+	- GitHub Actions CI/CD
 
-Each microservice has its own Docker image.
+---
 
-Example Containers
-Frontend Container
-Product Service Container
-User Service Container
-PostgreSQL Containers
-Container Orchestration
-Kubernetes
-What it is
-
-Kubernetes is a container orchestration platform used to manage containerized applications.
-
-Why it was used
-
-Kubernetes provides:
-
-Automatic deployment
-Scaling
-Self-healing
-Load balancing
-Service discovery
-Rolling updates
-Kubernetes Resources Used
-Deployments
-Services
-Secrets
-Persistent Volumes
-Persistent Volume Claims
-KIND (Kubernetes IN Docker)
-What it is
-
-KIND is a lightweight Kubernetes cluster running inside Docker.
-
-Why it was used
-Lightweight local Kubernetes environment
-Perfect for development/testing
-Easy integration with Docker Desktop
-Infrastructure as Code
-Terraform
-What it is
-
-Terraform is an Infrastructure as Code (IaC) tool used to automate infrastructure provisioning.
-
-Why it was used
-
-Instead of manually creating Kubernetes resources using kubectl commands, Terraform:
-
-Automates deployments
-Maintains infrastructure consistency
-Supports version-controlled infrastructure
-Makes deployments reproducible
-Resources Managed by Terraform
-Kubernetes Deployments
-Services
-Secrets
-Persistent Storage
-Monitoring Namespace
-CI/CD Pipeline
-GitHub Actions
-What it is
-
-GitHub Actions is a CI/CD automation platform integrated into GitHub.
-
-Why it was used
-
-It automates:
-
-Docker image builds
-Image pushes to Docker Hub
-Kubernetes deployments
-Terraform execution
-Pipeline Flow
-Code pushed to GitHub
-Docker images built
-Images pushed to Docker Hub
-Terraform deploys to Kubernetes
-Services become available automatically
-Self-Hosted GitHub Runner
-What it is
-
-A self-hosted GitHub Actions runner executes workflows on a custom machine instead of GitHub servers.
-
-Why it was used
-
-GitHub-hosted runners cannot directly access the local Kubernetes cluster.
-
-A self-hosted runner was required to:
-
-Access local Docker Desktop Kubernetes
-Run kubectl commands
-Execute Terraform locally
-DevOps Concepts Demonstrated
-Microservices Architecture
-
-The application is split into independent services instead of a monolith.
-
-Benefits:
-
-Independent scaling
-Better maintainability
-Fault isolation
-Easier deployments
-CI/CD Automation
-
-The entire deployment process is automated from Git push to Kubernetes deployment.
-
-Infrastructure as Code
-
-All infrastructure is defined using Terraform instead of manual configuration.
-
-Containerization
-
-Every component runs inside isolated Docker containers.
-
-Orchestration
-
-Kubernetes manages deployment lifecycle, networking, and service communication.
-
-Service Discovery
-
-Eureka enables dynamic communication between microservices.
-
-Persistent Storage
-
-PostgreSQL databases use persistent volumes to retain data across container restarts.
-
-Frontend Features
-
-Implemented Features:
-
-Product Listing
-Shopping Cart
-User Registration
-User Login
-Checkout Flow
-Order Placement
-Backend Features
-
-Implemented Features:
-
-Product APIs
-User APIs
-Order APIs
-API Gateway Routing
-Service Discovery
-Database Integration
-Deployment Workflow
-Local Development
-
-Services can run individually using Docker.
-
-Production-like Deployment
-
-The complete application stack runs on Kubernetes using:
-
-Terraform
-Docker images
-GitHub Actions CI/CD
-Why This Project Matters
+## Why This Project Matters
 
 This project demonstrates:
 
-Full-stack development
-Cloud-native architecture
-DevOps automation
-Kubernetes orchestration
-Infrastructure as Code
-CI/CD implementation
-Containerized deployments
-Microservices communication
+- Full-stack development
+- Cloud-native architecture
+- DevOps automation
+- Kubernetes orchestration
+- Infrastructure as Code
+- CI/CD implementation
+- Containerized deployments
+- Microservices communication
 
 It reflects many concepts used in real-world production systems and modern DevOps environments.
 
-Future Improvements
+---
 
-Possible future enhancements:
+## Future Improvements
 
-JWT Authentication
-Role-based access control
-Prometheus Monitoring
-Grafana Dashboards
-Distributed Tracing
-Helm Charts
-ArgoCD GitOps
-Horizontal Pod Autoscaling
-Kafka Event Streaming
-Redis Caching
-NGINX Ingress Controller
-Conclusion
+Possible enhancements:
+
+- JWT Authentication
+- Role-based access control
+- Prometheus Monitoring
+- Grafana Dashboards
+- Distributed Tracing
+- Helm Charts
+- ArgoCD GitOps
+- Horizontal Pod Autoscaling
+- Kafka Event Streaming
+- Redis Caching
+- NGINX Ingress Controller
+
+---
+
+## Conclusion
 
 DevOps Store is a complete cloud-native microservices project demonstrating how modern distributed applications are:
 
-Developed
-Containerized
-Automated
-Deployed
-Orchestrated
-Scaled
+- Developed
+- Containerized
+- Automated
+- Deployed
+- Orchestrated
+- Scaled
 
 using modern DevOps and cloud technologies.

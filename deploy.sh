@@ -1,32 +1,40 @@
 #!/bin/bash
 
-# 1. Get the latest short commit hash
-export BUILD_ID=$(git rev-parse --short HEAD 2>/dev/null || echo "latest")
-echo "🚀 Deploying version: $BUILD_ID"
+set -e
 
-# 2. Navigate to k8s directory
-cd k8s
+echo "🚀 Starting DevOps Store deployment..."
 
-# 3. Apply Infrastructure (Storage)
-echo "📦 Applying Storage..."
-kubectl apply -f database-storage.yaml
+# Create Kind cluster if it doesn't exist
+if ! kind get clusters | grep -q "devops-store"; then
+  echo "📦 Creating Kind cluster..."
+  kind create cluster --name devops-store --config kind-config.yaml
+else
+  echo "✅ Kind cluster already exists"
+fi
 
-# 4. Apply Secrets and Databases (Using specific paths)
-echo "🔐 Applying Secrets and Databases..."
-kubectl apply -f user/user-secret.yaml
-kubectl apply -f product/product-secret.yaml
-kubectl apply -f order/order-secret.yaml
+# Wait for cluster
+echo "⏳ Waiting for Kubernetes cluster..."
+kubectl wait --for=condition=Ready nodes --all --timeout=120s
 
-kubectl apply -f user/user-db.yaml
-kubectl apply -f product/product-db.yaml
-kubectl apply -f order/order-db.yaml
+# Terraform Init
+echo "⚙️ Initializing Terraform..."
+terraform -chdir=terraform/k8s-resources init
 
-# 5. Apply Applications with BUILD_ID injection
-echo "💻 Deploying Microservices..."
-envsubst < user/user-app.yaml | kubectl apply -f -
-envsubst < product/product-app.yaml | kubectl apply -f -
-envsubst < order/order-app.yaml | kubectl apply -f -
-envsubst < gateway/gateway-app.yaml | kubectl apply -f -
-envsubst < frontend/frontend-app.yaml | kubectl apply -f -
+# Terraform Apply
+echo "🚀 Applying Terraform infrastructure..."
+terraform -chdir=terraform/k8s-resources apply -auto-approve
 
-echo "✅ Deployment commands sent. Run 'kubectl get pods' to check status."
+echo ""
+echo "✅ Deployment Complete!"
+echo ""
+
+echo "🌐 Services:"
+echo "Frontend        -> http://localhost:30000"
+echo "API Gateway     -> http://localhost:30080"
+echo "Product Service -> http://localhost:30081"
+echo "User Service    -> http://localhost:30082"
+echo "Order Service   -> http://localhost:30083"
+
+echo ""
+echo "📊 Pod Status:"
+kubectl get pods

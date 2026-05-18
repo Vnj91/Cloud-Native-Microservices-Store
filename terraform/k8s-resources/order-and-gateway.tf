@@ -163,8 +163,9 @@ resource "kubernetes_service_v1" "api_gateway" {
     port {
       port        = 80
       target_port = 8080
+      node_port   = 30080
     }
 
-    type = "LoadBalancer"
+    type = "NodePort"
   }
 }

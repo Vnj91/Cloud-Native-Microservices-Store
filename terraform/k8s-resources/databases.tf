@@ -1,44 +1,4 @@
 # =========================
-# USER DB STORAGE
-# =========================
-
-resource "kubernetes_persistent_volume_v1" "user_db_pv" {
-  metadata {
-    name = "user-db-pv"
-  }
-
-  spec {
-    capacity = {
-      storage = "1Gi"
-    }
-
-    access_modes = ["ReadWriteOnce"]
-
-    persistent_volume_source {
-      host_path {
-        path = "/mnt/data/user-db"
-      }
-    }
-  }
-}
-
-resource "kubernetes_persistent_volume_claim_v1" "user_db_pvc" {
-  metadata {
-    name = "user-db-pvc"
-  }
-
-  spec {
-    access_modes = ["ReadWriteOnce"]
-
-    resources {
-      requests = {
-        storage = "1Gi"
-      }
-    }
-  }
-}
-
-# =========================
 # USER DB
 # =========================
 
@@ -99,11 +59,6 @@ resource "kubernetes_deployment_v1" "user_db" {
             }
           }
 
-          volume_mount {
-            name       = "user-db-storage"
-            mount_path = "/var/lib/postgresql/data"
-          }
-
           readiness_probe {
             exec {
               command = ["pg_isready", "-U", "postgres"]
@@ -134,22 +89,9 @@ resource "kubernetes_deployment_v1" "user_db" {
             }
           }
         }
-
-        volume {
-          name = "user-db-storage"
-
-          persistent_volume_claim {
-            claim_name = kubernetes_persistent_volume_claim_v1.user_db_pvc.metadata[0].name
-          }
-        }
       }
     }
   }
-
-  depends_on = [
-    kubernetes_persistent_volume_v1.user_db_pv,
-    kubernetes_persistent_volume_claim_v1.user_db_pvc
-  ]
 }
 
 # =========================
